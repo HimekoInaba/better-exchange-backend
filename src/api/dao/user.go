@@ -18,17 +18,24 @@ const (
 	COLLECTION = "user"
 )
 
+func NewConnection(server, database string) *UserDAO {
+	m := UserDAO{server, database}
+	m.Connect()
+	return &m
+}
+
 func (m *UserDAO) Connect()  {
 	session, err := mgo.Dial(m.Server)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	db = session.DB(m.Database)
 }
 
 func (m *UserDAO) FindAll() ([]model.User, error) {
-	var users []model.User
+	users := []model.User{}
 	err := db.C(COLLECTION).Find(bson.M{}).All(&users)
+
 	return users, err
 }
 
@@ -40,6 +47,9 @@ func (m *UserDAO) FindById(id string) (model.User, error) {
 
 func (m *UserDAO) Insert(user model.User) error {
 	err := db.C(COLLECTION).Insert(&user)
+	if err == nil {
+		log.Print("SAKSESFUL")
+	}
 	return err
 }
 

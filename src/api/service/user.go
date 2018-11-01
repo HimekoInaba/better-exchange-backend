@@ -6,11 +6,11 @@ import (
 )
 
 var (
-	userDAO = dao.UserDAO{}
+	userDAO = dao.NewConnection("localhost:27017", "shaitan")
 )
 
 func Register(user model.User) error {
-	userDAO.Insert(user)
+	return userDAO.Insert(user)
 }
 
 func ChangeProfileData(user model.User)  {

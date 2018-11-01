@@ -3,6 +3,7 @@ package controller
 import (
 	"grpc-rest-api/src/api/dao"
 	"grpc-rest-api/src/api/model"
+	"grpc-rest-api/src/api/service"
 	"grpc-rest-api/src/api/util"
 	"encoding/json"
 	"github.com/gorilla/mux"
@@ -16,16 +17,19 @@ var (
 )
 
 func RegisterEndpoint(w http.ResponseWriter, r *http.Request)  {
+	log.Print("register endpoint hit")
 	defer r.Body.Close()
 	var user model.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		util.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		log.Println(err)
 		return
 	}
 	user.Id = bson.NewObjectId()
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-		util.RespondWithError(w, http.StatusInternalServerError, err.Error())
-		return
+
+	err := service.Register(user)
+	if err != nil {
+		log.Print("Error during registration", err)
 	}
 	util.RespondWithJson(w, http.StatusCreated, user)
 }
@@ -51,6 +55,6 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 
 func UsersController(router *mux.Router) {
 	router.HandleFunc("/register", RegisterEndpoint).Methods("POST")
-	router.HandleFunc("/{id}", GetSingleUser).Methods("GET")
 	router.HandleFunc("/all", GetAllUsers).Methods("GET")
+	router.HandleFunc("/{id}", GetSingleUser).Methods("GET")
 }
