@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 	"log"
 	"net/http"
 )
@@ -17,7 +18,8 @@ func HandleRequest() {
 
 	UsersController(router.PathPrefix("/users").Subrouter())
 
-	if err := http.ListenAndServe(":8091", router); err != nil {
+	handler := cors.Default().Handler(router)
+	if err := http.ListenAndServe(":8091", handler); err != nil {
 		log.Fatal(err)
 	}
 }

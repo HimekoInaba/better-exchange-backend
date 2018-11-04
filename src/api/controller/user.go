@@ -1,10 +1,10 @@
 package controller
 
 import (
-	"grpc-rest-api/src/api/dao"
-	"grpc-rest-api/src/api/model"
-	"grpc-rest-api/src/api/service"
-	"grpc-rest-api/src/api/util"
+	"Goprojects/better-exchange-back/src/api/dao"
+	"Goprojects/better-exchange-back/src/api/model"
+	"Goprojects/better-exchange-back/src/api/service"
+	"Goprojects/better-exchange-back/src/api/util"
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2/bson"
@@ -13,10 +13,10 @@ import (
 )
 
 var (
-	userDao = dao.UserDAO{}
+	userDao = dao.Connection{}
 )
 
-func RegisterEndpoint(w http.ResponseWriter, r *http.Request)  {
+func Register(w http.ResponseWriter, r *http.Request) {
 	log.Print("register endpoint hit")
 	defer r.Body.Close()
 	var user model.User
@@ -25,13 +25,21 @@ func RegisterEndpoint(w http.ResponseWriter, r *http.Request)  {
 		log.Println(err)
 		return
 	}
-	user.Id = bson.NewObjectId()
 
-	err := service.Register(user)
+	oldUser, err := userDao.FindByEmail(user.Email)
 	if err != nil {
-		log.Print("Error during registration", err)
+		log.Println(err)
 	}
-	util.RespondWithJson(w, http.StatusCreated, user)
+	if oldUser != (model.User{}) {
+		util.RespondWithError(w, http.StatusConflict, "User with this email already registered")
+	} else {
+		user.Id = bson.NewObjectId()
+		err := service.Register(user)
+		if err != nil {
+			log.Print("Error during registration", err)
+		}
+		util.RespondWithJson(w, http.StatusCreated, user)
+	}
 }
 
 func GetSingleUser(w http.ResponseWriter, r *http.Request) {
@@ -53,8 +61,30 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(users)
 }
 
+func Login(w http.ResponseWriter, r *http.Request) {
+	log.Println("Login endpoint hit")
+	var loginData model.LoginData
+
+	if err := json.NewDecoder(r.Body).Decode(&loginData); err != nil {
+		util.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		log.Println(err)
+		return
+	}
+
+	valid, err := service.Login(loginData)
+	if err != nil {
+		log.Println(err)
+	}
+	if valid {
+		json.NewEncoder(w).Encode("Success")
+	} else {
+		json.NewEncoder(w).Encode("Fail")
+	}
+}
+
 func UsersController(router *mux.Router) {
-	router.HandleFunc("/register", RegisterEndpoint).Methods("POST")
+	router.HandleFunc("/register", Register).Methods("POST")
 	router.HandleFunc("/all", GetAllUsers).Methods("GET")
 	router.HandleFunc("/{id}", GetSingleUser).Methods("GET")
+	router.HandleFunc("/login", Login).Methods("POST")
 }

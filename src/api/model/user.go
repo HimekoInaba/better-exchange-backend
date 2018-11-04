@@ -9,3 +9,8 @@ type User struct {
 	Email string `bosn:"email" json:"email"`
 	BirthDate string `bson:"birthDate" json:"birth_date"`
 }
+
+type LoginData struct {
+	Email string `json:"email"`
+	Password string `json:"password"`
+}

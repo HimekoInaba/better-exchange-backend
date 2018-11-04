@@ -1,6 +1,6 @@
 package main
 
-import "../src/api/controller"
+import "./api/controller"
 
 func main() {
 	controller.HandleRequest()
