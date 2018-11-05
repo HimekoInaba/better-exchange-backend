@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Twirp REST API.iml" filepath="$PROJECT_DIR$/.idea/Twirp REST API.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/better-exchange-backend.iml" filepath="$PROJECT_DIR$/.idea/better-exchange-backend.iml" />
     </modules>
   </component>
 </project>
