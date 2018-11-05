@@ -6,7 +6,7 @@ type User struct {
 	Id bson.ObjectId `bson:"_id" json:"id"`
 	Username string `bson:"username" json:"username"`
 	Password string `bson:"password"`
-	Email string `bosn:"email" json:"email"`
+	Email string `bson:"email" json:"email"`
 	BirthDate string `bson:"birthDate" json:"birth_date"`
 }
 

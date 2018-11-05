@@ -1,8 +1,8 @@
 package service
 
 import (
-	"Goprojects/better-exchange-back/src/api/dao"
-	"Goprojects/better-exchange-back/src/api/model"
+	"better-exchange-backend/src/model"
+	"grpc-rest-api/src/api/dao"
 )
 
 var (

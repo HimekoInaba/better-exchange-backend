@@ -1,10 +1,10 @@
 package controller
 
 import (
-	"Goprojects/better-exchange-back/src/api/dao"
-	"Goprojects/better-exchange-back/src/api/model"
-	"Goprojects/better-exchange-back/src/api/service"
-	"Goprojects/better-exchange-back/src/api/util"
+	"better-exchange-backend/src/model"
+	"better-exchange-backend/src/service"
+	"better-exchange-backend/src/util"
+	"better-exchange-backend/src/core/database"
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2/bson"
@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	userDao = dao.Connection{}
+	userDao = database.Connection{}
 )
 
 func Register(w http.ResponseWriter, r *http.Request) {
